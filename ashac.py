@@ -10,12 +10,25 @@ class SdkControl:
 
 		self.storage = pj(sdk_root, "bin/storage")
 
+	def storages(self):
+		return [pj(self.storage, b) for b in os.listdir(self.storage) if b.isdigit()]
+
+	def get_fs(self):
+		s = self.storages()
+		if not s:
+			print "Error: no emulators initialized"
+			return None
+		return s[0]
+
+
 
 
 ctr = SdkControl(sdk_root)
 
 def killemu():
 	os.system("taskkill /im Nokia_SDK_2_0_Java_em.exe /f")
+
+
 
 def reset_cmd(args):
 	print "reset",args
@@ -34,6 +47,8 @@ def kill_cmd(args):
 	print "Kill emulator"
 	killemu()
 
+def open_cmd(args):
+	os.startfile(ctr.get_fs())
 
 
 def handle_args():
@@ -49,6 +64,10 @@ def handle_args():
 	pc = subparsers.add_parser('kill', 
 		help = "Kill emulator")
 
+	pc = subparsers.add_parser('open', 
+		help = "Open storage location in explorer")
+
+
 	opts = parser.parse_args(sys.argv[1:])
 	sp = opts.subparser_name
 
@@ -58,6 +77,8 @@ def handle_args():
 		emu_cmd(opts)
 	elif sp == 'kill':
 		kill_cmd(opts)
+	elif sp == 'open':
+		open_cmd(opts)
 
 
 
