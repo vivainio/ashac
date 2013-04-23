@@ -7,19 +7,33 @@ pj = os.path.join
 class SdkControl:
 	def __init__(self, sdk_root):
 		self.root = sdk_root
-		self.fsroot = pj(sdk_root, "bin/storage/2000")
+
+		self.storage = pj(sdk_root, "bin/storage")
+
+
 
 ctr = SdkControl(sdk_root)
 
+def killemu():
+	os.system("taskkill /im Nokia_SDK_2_0_Java_em.exe /f")
+
 def reset_cmd(args):
 	print "reset",args
-	assert os.path.isdir(ctr.fsroot)
-	print "Nuking", ctr.fsroot
-	shutil.rmtree(ctr.fsroot)
+	storages = [pj(ctr.storage, b) for b in os.listdir(ctr.storage) if b.isdigit()]
+	print "Storages found:", storages
+	killemu()
+	for s in storages:
+		print "Nuking",	s
+		shutil.rmtree(s)
 	
 def emu_cmd(args):
 	print "Launch emulator"
 	os.startfile(pj(ctr.root, "bin/emulator.exe"))
+
+def kill_cmd(args):
+	print "Kill emulator"
+	killemu()
+
 
 
 def handle_args():
@@ -32,17 +46,23 @@ def handle_args():
 	pb = subparsers.add_parser('emu', 
 		help='Launch emulator')
 
+	pc = subparsers.add_parser('kill', 
+		help = "Kill emulator")
+
 	opts = parser.parse_args(sys.argv[1:])
 	sp = opts.subparser_name
 
 	if sp == 'reset':
 		reset_cmd(opts)
-	if sp == 'emu':
+	elif sp == 'emu':
 		emu_cmd(opts)
+	elif sp == 'kill':
+		kill_cmd(opts)
 
 
 
-	print opts
+
+	#print opts
 
 
 
