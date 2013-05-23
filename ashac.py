@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import argparse
 import os,sys,shutil
+import mglob
+
 sdk_root = "C:/Nokia/Devices/Nokia_SDK_2_0_Java"
 pj = os.path.join
 
@@ -50,6 +52,17 @@ def kill_cmd(args):
 def open_cmd(args):
 	os.startfile(ctr.get_fs())
 
+def myapps_cmd(args):
+	print "myapps_cmd",args
+	files = mglob.expand(args.file)
+	tg = pj(ctr.get_fs(), "C/predefjava/predefcollections")
+
+	print "Copying",files, "to",tg
+	for f in files:
+		shutil.copy(f, tg)
+
+
+
 
 def handle_args():
 
@@ -67,7 +80,10 @@ def handle_args():
 	pc = subparsers.add_parser('open', 
 		help = "Open storage location in explorer")
 
+	pd = subparsers.add_parser('myapps', 
+		help = "Copy files to 'myapps' in emulator file system")
 
+	pd.add_argument('file', type = str, nargs = "+")
 	opts = parser.parse_args(sys.argv[1:])
 	sp = opts.subparser_name
 
@@ -79,6 +95,8 @@ def handle_args():
 		kill_cmd(opts)
 	elif sp == 'open':
 		open_cmd(opts)
+	elif sp == 'myapps':
+		myapps_cmd(opts)
 
 
 
