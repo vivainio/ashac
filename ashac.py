@@ -29,6 +29,7 @@ ctr = SdkControl(sdk_root)
 
 def killemu():
 	os.system("taskkill /im Nokia_SDK_2_0_Java_em.exe /f")
+	os.system("taskkill /im Nokia_Asha_SDK_1_0_em.exe /f")
 	os.system("taskkill /im java.exe /f")
 	os.system("taskkill /im javaw.exe /f")
 
